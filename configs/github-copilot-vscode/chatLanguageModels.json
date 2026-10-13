@@ -1,0 +1,19 @@
+[
+  {
+    "name": "YOUR_PROVIDER",
+    "vendor": "customendpoint",
+    "apiKey": "${input:yourProviderApiKey}",
+    "apiType": "chat-completions",
+    "models": [
+      {
+        "id": "MODEL_ID",
+        "name": "MODEL_ID",
+        "url": "https://YOUR_PROVIDER/v1/chat/completions",
+        "toolCalling": true,
+        "vision": false,
+        "maxInputTokens": 128000,
+        "maxOutputTokens": 16000
+      }
+    ]
+  }
+]

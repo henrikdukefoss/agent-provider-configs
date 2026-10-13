@@ -1,0 +1,6 @@
+{
+  "baseUrl": "https://YOUR_PROVIDER/v1/chat/completions",
+  "id": "MODEL_ID",
+  "apiType": "OpenAICompletion",
+  "apiKey": "${YOUR_PROVIDER_API_KEY}"
+}

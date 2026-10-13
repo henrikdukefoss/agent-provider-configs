@@ -1,0 +1,19 @@
+{
+  "providerProfiles": {
+    "currentApiConfigName": "my-provider",
+    "apiConfigs": {
+      "my-provider": {
+        "apiProvider": "openai",
+        "openAiBaseUrl": "https://YOUR_PROVIDER/v1",
+        "openAiApiKey": "YOUR_PROVIDER_API_KEY",
+        "openAiModelId": "MODEL_ID",
+        "openAiCustomModelInfo": {
+          "contextWindow": 128000,
+          "maxTokens": 16384,
+          "supportsImages": false,
+          "supportsPromptCache": false
+        }
+      }
+    }
+  }
+}

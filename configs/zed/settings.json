@@ -1,0 +1,31 @@
+{
+  "language_models": {
+    "openai_compatible": {
+      "your-provider": {
+        "api_url": "https://YOUR_PROVIDER/v1",
+        "available_models": [
+          {
+            "name": "MODEL_ID",
+            "display_name": "My model",
+            "max_tokens": 128000,
+            "max_output_tokens": 16384,
+            "capabilities": {
+              "tools": true,
+              "images": false,
+              "parallel_tool_calls": false,
+              "prompt_cache_key": false
+            }
+          }
+        ]
+      }
+    },
+    "anthropic_compatible": {
+      "your-provider-anthropic": {
+        "api_url": "https://YOUR_PROVIDER",
+        "available_models": [
+          { "name": "MODEL_ID", "max_tokens": 200000, "max_output_tokens": 32000 }
+        ]
+      }
+    }
+  }
+}

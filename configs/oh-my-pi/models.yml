@@ -1,0 +1,13 @@
+# ~/.omp/agent/models.yml
+providers:
+  myprovider:
+    baseUrl: https://YOUR_PROVIDER/v1
+    apiKey: YOUR_PROVIDER_API_KEY   # env var NAME; see the gotcha about unset variables
+    api: openai-completions
+    models:
+      - id: MODEL_ID
+        name: My model
+        reasoning: false
+        input: [text]
+        contextWindow: 128000
+        maxTokens: 16384

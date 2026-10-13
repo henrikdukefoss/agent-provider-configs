@@ -1,0 +1,14 @@
+name: My Config
+version: 0.0.1
+schema: v1
+models:
+  - name: My Provider Model
+    provider: openai
+    model: MODEL_ID
+    apiBase: https://YOUR_PROVIDER/v1
+    apiKey: ${{ secrets.YOUR_PROVIDER_API_KEY }}
+    roles: [chat, edit, apply]
+    capabilities: [tool_use]
+    defaultCompletionOptions:
+      contextLength: 128000
+      maxTokens: 8192

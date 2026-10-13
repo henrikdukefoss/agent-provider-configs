@@ -1,0 +1,23 @@
+{
+  "agents": { "defaults": { "model": { "primary": "myprovider/MODEL_ID" } } },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "myprovider": {
+        "baseUrl": "https://YOUR_PROVIDER/v1",
+        "apiKey": "${YOUR_PROVIDER_API_KEY}",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "MODEL_ID",
+            "name": "My model",
+            "reasoning": false,
+            "input": ["text"],
+            "contextWindow": 128000,
+            "maxTokens": 16384
+          }
+        ]
+      }
+    }
+  }
+}

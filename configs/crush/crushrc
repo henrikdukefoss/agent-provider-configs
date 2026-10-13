@@ -1,0 +1,7 @@
+# ~/.config/crush/crushrc  (Bash with Crush built-ins)
+provider add myprovider --name "My Provider" --type openai-compat \
+  --base-url "https://YOUR_PROVIDER/v1" \
+  --api-key "${YOUR_PROVIDER_API_KEY:?set YOUR_PROVIDER_API_KEY}"
+model add myprovider/MODEL_ID --name "MODEL_ID" \
+  --context-window 128000 --default-max-tokens 8192
+model large myprovider/MODEL_ID

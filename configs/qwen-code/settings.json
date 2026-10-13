@@ -1,0 +1,14 @@
+{
+  "modelProviders": {
+    "openai": [
+      {
+        "id": "MODEL_ID",
+        "name": "MODEL_ID (my provider)",
+        "baseUrl": "https://YOUR_PROVIDER/v1",
+        "envKey": "YOUR_PROVIDER_API_KEY"
+      }
+    ]
+  },
+  "security": { "auth": { "selectedType": "openai" } },
+  "model": { "name": "MODEL_ID" }
+}

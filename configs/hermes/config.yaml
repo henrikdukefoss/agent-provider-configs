@@ -1,0 +1,12 @@
+# ~/.hermes/config.yaml
+providers:
+  myprovider:
+    api: https://YOUR_PROVIDER/v1
+    key_env: YOUR_PROVIDER_API_KEY
+    transport: chat_completions
+    default_model: MODEL_ID
+    models:
+      MODEL_ID: { context_length: 128000 }
+model:
+  provider: custom:myprovider
+  default: MODEL_ID

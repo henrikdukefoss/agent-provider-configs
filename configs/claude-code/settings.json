@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://YOUR_PROVIDER",
+    "ANTHROPIC_MODEL": "MODEL_ID",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "MODEL_ID",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "MODEL_ID",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "SMALL_MODEL_ID"
+  },
+  "apiKeyHelper": "printf %s \"$YOUR_PROVIDER_API_KEY\""
+}

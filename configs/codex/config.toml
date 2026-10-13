@@ -1,0 +1,9 @@
+# ~/.codex/config.toml
+model = "MODEL_ID"
+model_provider = "myprovider"
+
+[model_providers.myprovider]
+name = "My Provider"
+base_url = "https://YOUR_PROVIDER/v1"   # Codex calls {base_url}/responses
+env_key = "YOUR_PROVIDER_API_KEY"       # name of the env var, not the key itself
+wire_api = "responses"                  # "chat" was removed; the provider must support /v1/responses

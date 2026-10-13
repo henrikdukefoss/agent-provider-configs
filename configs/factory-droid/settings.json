@@ -1,0 +1,12 @@
+{
+  "customModels": [
+    {
+      "model": "MODEL_ID",
+      "displayName": "MODEL_ID (my provider)",
+      "baseUrl": "https://YOUR_PROVIDER/v1",
+      "apiKey": "${YOUR_PROVIDER_API_KEY}",
+      "provider": "generic-chat-completion-api",
+      "maxOutputTokens": 16384
+    }
+  ]
+}

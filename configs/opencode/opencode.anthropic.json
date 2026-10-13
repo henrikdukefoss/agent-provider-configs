@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "myanthropic": {
+      "npm": "@ai-sdk/anthropic",
+      "name": "My Anthropic-compatible provider",
+      "options": {
+        "baseURL": "https://YOUR_PROVIDER/v1",
+        "apiKey": "{env:YOUR_PROVIDER_API_KEY}"
+      },
+      "models": {
+        "MODEL_ID": {
+          "name": "My model",
+          "limit": { "context": 200000, "output": 32000 }
+        }
+      }
+    }
+  },
+  "model": "myanthropic/MODEL_ID"
+}

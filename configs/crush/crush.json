@@ -1,0 +1,25 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "providers": {
+    "myprovider": {
+      "type": "openai-compat",
+      "base_url": "https://YOUR_PROVIDER/v1",
+      "api_key": "$YOUR_PROVIDER_API_KEY",
+      "models": [
+        {
+          "id": "MODEL_ID",
+          "name": "MODEL_ID",
+          "context_window": 128000,
+          "default_max_tokens": 8192,
+          "cost_per_1m_in": 0,
+          "cost_per_1m_out": 0,
+          "cost_per_1m_in_cached": 0,
+          "cost_per_1m_out_cached": 0,
+          "can_reason": false,
+          "supports_attachments": false
+        }
+      ]
+    }
+  },
+  "models": { "large": { "provider": "myprovider", "model": "MODEL_ID" } }
+}
