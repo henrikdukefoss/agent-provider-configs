@@ -10,7 +10,7 @@ a gateway, a router, another model vendor, or a server on your own machine.
 You need three values: a **base URL**, an **API key**, and a **model ID** that the provider serves.
 Where they go depends on the agent:
 
-- **Claude Code** reads env vars: `ANTHROPIC_BASE_URL` (no `/v1`), `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL`. It only speaks the Anthropic Messages API.
+- **Claude Code** reads env vars: `ANTHROPIC_BASE_URL` (no `/v1`), `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL`. It only speaks the Anthropic Messages API. Its aliases and background calls request their own Claude model IDs, so also set every `ANTHROPIC_DEFAULT_*_MODEL`; [claude-code-provider](https://github.com/henrikdukefoss/claude-code-provider) does this and checks the result with one request.
 - **OpenCode** and **Kilo Code** take a `provider` block in `opencode.json` / `kilo.json` with `"npm": "@ai-sdk/openai-compatible"` and `options.baseURL`.
 - **Codex CLI** takes a `[model_providers.<id>]` table in `~/.codex/config.toml`. It only speaks the OpenAI **Responses** API now; `wire_api = "chat"` was removed.
 - **Cline, Roo Code, Cursor, Copilot, JetBrains** have an "OpenAI Compatible" option in their settings UI.
