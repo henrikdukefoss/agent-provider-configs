@@ -1,0 +1,11 @@
+# Amp: Settings -> Model Routing -> Add -> Custom URL
+#   Format:   chat-completions
+#   Base URL: https://YOUR_PROVIDER/v1   (Amp appends /chat/completions)
+#   API key:  YOUR_PROVIDER_API_KEY      (sent as Authorization: Bearer)
+#
+# Paste the lines below into "Model mapping". One pattern per line, Amp's provider/model IDs.
+# Only matching models go to this connection; the last matching line wins.
+# Then pin the models in Settings -> Mode Dial -> Tune Modes.
+
+openai/gpt-5.6-sol
+moonshotai/kimi-k3 -> MODEL_ID

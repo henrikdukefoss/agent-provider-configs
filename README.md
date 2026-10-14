@@ -3,7 +3,7 @@
 Copy-paste configs for pointing AI coding agents at any OpenAI-compatible or Anthropic-compatible API:
 a gateway, a router, another model vendor, or a server on your own machine.
 
-20 agents, 21 provider presets, a source link for every key. Last checked: **2026-10-14**.
+22 agents, 21 provider presets, a source link for every key. Last checked: **2026-10-14**.
 
 ## How do I point an AI coding agent at a custom OpenAI-compatible API?
 
@@ -47,9 +47,11 @@ Placeholders used everywhere: `https://YOUR_PROVIDER/v1`, `YOUR_PROVIDER_API_KEY
 | [Goose](#goose) | `~/.config/goose/custom_providers/*.json` | yes | yes | yes | docs, source |
 | [Qwen Code](#qwen-code) | `~/.qwen/settings.json` | yes | yes | yes | docs |
 | [Factory Droid](#factory-droid) | `~/.factory/settings.json` | yes | yes | yes | docs |
+| [Amp](#amp) | Settings → Model Routing → Custom URL | yes | yes | yes | docs |
 | [Zed](#zed) | `settings.json` | yes | yes | yes | docs, source |
 | [Cursor (BYOK)](#cursor-byok) | Settings → Models | yes | | | docs, staff posts |
 | [GitHub Copilot in VS Code](#github-copilot-in-vs-code-custom-endpoint) | `chatLanguageModels.json` | yes | yes | yes | docs |
+| [GitHub Copilot CLI](#github-copilot-cli) | `COPILOT_PROVIDER_*` env vars | yes | | yes | docs |
 | [JetBrains AI Assistant and Junie CLI](#jetbrains-ai-assistant-and-junie-cli) | IDE settings, `~/.junie/models/*.json` | yes | yes (Junie) | yes (Junie) | docs |
 | [Gemini CLI](#gemini-cli) | not supported | | | | docs, source |
 
@@ -682,6 +684,38 @@ Anthropic-compatible: `"provider": "anthropic"` and `"baseUrl": "https://YOUR_PR
 
 **Sources:** [Factory docs: BYOK](https://docs.factory.com/cli/configuration/byok)
 
+## Amp
+
+**Where:** **Settings → Model Routing → Add → Custom URL** in Amp (workspace admins: **Workspace Model Routing**). The CLI has the same operations under `amp config model-providers`. **API:** `chat-completions` (default), `responses`, `anthropic-messages`, `google-genai`. Custom URL connections are available on every Amp tier.
+
+| Field | Value |
+| --- | --- |
+| Format | `chat-completions` |
+| Base URL | `https://YOUR_PROVIDER/v1` (Amp appends `/chat/completions`) |
+| API key | `YOUR_PROVIDER_API_KEY` (sent as `Authorization: Bearer`) |
+| Model mapping | see below |
+
+Model mapping, one pattern per line, using Amp's `provider/model` IDs ([`configs/amp/model-mapping.txt`](configs/amp/model-mapping.txt)):
+
+```text
+# Only the models listed here go to this connection; everything else stays on Amp.
+openai/gpt-5.6-sol                       # same ID on Amp and the provider
+moonshotai/kimi-k3 -> MODEL_ID           # send a different model ID to the provider
+```
+
+Then pin the models in **Settings → Mode Dial → Tune Modes** (Main Agent, Oracle, Subagents) so a mode actually uses them.
+
+For `anthropic-messages`, the base URL can be `https://YOUR_PROVIDER` or end in `/v1`; Amp requests `/v1/messages` and does not double `/v1`.
+
+**Gotchas**
+- **Mapping decides routing.** Amp tries personal connections top to bottom, then workspace connections, then Amp. A model matching no line is not served by the connection. The last matching line wins; `-pattern` excludes; `*` only at the start or end; `->` only on exact include lines.
+- **Amp's IDs can differ from your provider's.** Pick the left side with the **Models** picker (Claude IDs use dashes, e.g. `anthropic/claude-opus-4-6`) and put your provider's exact ID after `->`.
+- **Check Access** (or `amp config model-providers check-access --provider-model <provider/model>`) runs one short request and reports which connection served it.
+- Web search, image generation, voice and orb minutes keep using Amp credits. A thread keeps the mode it started with.
+- Extra headers go in the connection's **Headers** setting (`--headers` in the CLI).
+
+**Sources:** [Amp docs: Model Routing](https://ampcode.com/docs/customize/model-routing) · [The Dial: Tune Modes](https://ampcode.com/docs/the-dial) · [Pricing](https://ampcode.com/pricing)
+
 ## Zed
 
 **Where:** `~/.config/zed/settings.json` (Windows `%APPDATA%\Zed\settings.json`), or **Agent Settings → LLM Providers → Add Provider**. **API:** Chat Completions (default), Responses (`chat_completions: false`), Anthropic Messages (`anthropic_compatible`).
@@ -788,6 +822,29 @@ For an Anthropic-compatible endpoint: `"apiType": "messages"` and `"url": "https
 - Requests go out from your machine, so a local server (Ollama, LM Studio, LiteLLM) works.
 
 **Sources:** [VS Code docs: language models](https://code.visualstudio.com/docs/agent-customization/language-models) · [docs source](https://github.com/microsoft/vscode-docs/blob/main/docs/agent-customization/language-models.md)
+
+## GitHub Copilot CLI
+
+**Where:** environment variables, set before starting `copilot`. **API:** `COPILOT_PROVIDER_TYPE` = `openai` (Chat Completions, the default), `azure` or `anthropic`.
+
+```sh
+# configs/github-copilot-cli/env.sh
+export COPILOT_PROVIDER_BASE_URL="https://YOUR_PROVIDER/v1"
+export COPILOT_PROVIDER_API_KEY="$YOUR_PROVIDER_API_KEY"
+export COPILOT_MODEL="MODEL_ID"
+```
+
+Anthropic-compatible: `COPILOT_PROVIDER_TYPE=anthropic` and `COPILOT_PROVIDER_BASE_URL=https://YOUR_PROVIDER` (no `/v1`, as in GitHub's Anthropic example).
+
+**Env vars:** also `COPILOT_PROVIDER_BEARER_TOKEN`, `COPILOT_PROVIDER_WIRE_API`, `COPILOT_PROVIDER_MODEL_ID` (the well-known model name used for capabilities and token limits), `COPILOT_PROVIDER_WIRE_MODEL` (the name sent to the provider), `COPILOT_PROVIDER_MAX_PROMPT_TOKENS`, `COPILOT_PROVIDER_MAX_OUTPUT_TOKENS`. `--model` overrides `COPILOT_MODEL`.
+
+**Gotchas**
+- The model must support **tool calling and streaming**, or the CLI returns an error. GitHub recommends a context window of at least 128k tokens.
+- If your provider's model name is not one Copilot knows, set `COPILOT_PROVIDER_MAX_PROMPT_TOKENS` and `COPILOT_PROVIDER_MAX_OUTPUT_TOKENS` yourself.
+- `COPILOT_OFFLINE=true` stops the CLI from contacting GitHub, but prompts still go to a remote provider if the base URL is remote.
+- `copilot help providers` prints more examples.
+
+**Sources:** [GitHub docs: add LLM models to Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models)
 
 ## JetBrains AI Assistant and Junie CLI
 
