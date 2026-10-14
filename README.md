@@ -923,6 +923,16 @@ The key is read from `$API_KEY` or a hidden prompt, passed to curl on stdin (so 
 
 Formats change often. If something here is out of date, a PR with a source link fixes it for everyone.
 
+## Related guides
+
+Written by Standard Compute, which maintains this repo:
+
+- [AI agent setup guides](https://standardcompute.com/integrations): one page per agent for pointing it at an OpenAI-compatible base URL.
+- [OpenCode config generator](https://standardcompute.com/tools/agent-config): builds an `opencode.json` provider block for any compatible provider.
+- [Fixing "model does not exist" (404)](https://standardcompute.com/fix/model-not-found) and [Fixing "Incorrect API key" (401)](https://standardcompute.com/fix/incorrect-api-key): the two errors most custom-provider setups hit first.
+- [Tool calling, MCP, streaming and caching through an LLM gateway](https://standardcompute.com/llm-gateway-compatibility): which features survive a proxy and which don't.
+- [AI coding agent monthly costs](https://standardcompute.com/ai-coding-agent-monthly-cost): measured spend per agent. Also in: [Español](https://standardcompute.com/costo-agente-de-codificacion-ia) · [Português](https://standardcompute.com/custo-agente-de-codificacao-ia) · [Français](https://standardcompute.com/cout-agent-de-codage-ia) · [日本語](https://standardcompute.com/ai-coding-agent-hiyou) · [한국어](https://standardcompute.com/ai-coding-agent-biyong) · [简体中文](https://standardcompute.com/ai-coding-agent-feiyong) · [Norsk](https://standardcompute.com/kostnad-ai-kodeagent)
+
 ## Contributing
 
 PRs are welcome, especially when an agent renames a key or moves a file. Please link the docs page or source file for each change and say whether you ran it. See [CONTRIBUTING.md](CONTRIBUTING.md).
