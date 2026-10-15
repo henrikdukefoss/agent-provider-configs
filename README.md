@@ -75,6 +75,10 @@ Base URLs as each provider's own docs state them. "Anthropic base URL" is the va
 | Standard Compute | `https://api.stdcmpt.com/v1` | `https://api.stdcmpt.com` | yes | `vendor/model`, or `standardcompute` to let it pick | flat monthly plan from $19, stops at budget | [docs](https://docs.standardcompute.com/) |
 | Vercel AI Gateway | `https://ai-gateway.vercel.sh/v1` | `https://ai-gateway.vercel.sh` | yes | `provider/model` | pay per token at provider list price | [docs](https://vercel.com/docs/ai-gateway/sdks-and-apis/openai-chat-completions), [Anthropic API](https://vercel.com/docs/ai-gateway/sdks-and-apis/anthropic-messages-api) |
 
+[![Add to Magpie](https://usemagpie.ai/img/add-to-magpie.svg)](https://usemagpie.ai/import#name=Standard+Compute&id=standardcompute&chat=https%3A%2F%2Fapi.stdcmpt.com%2Fv1&anthropic=https%3A%2F%2Fapi.stdcmpt.com&website=https%3A%2F%2Fstandardcompute.com&keys=https%3A%2F%2Fstandardcompute.com%2Fdashboard%2Fapi-keys&icon=https%3A%2F%2Fstandardcompute.com%2Fapple-icon.png)
+
+Using Magpie? One click adds Standard Compute as a provider (you paste your key in Magpie). Guide: https://standardcompute.com/integrations/magpie
+
 **Model vendors** (their own models)
 
 | Provider | OpenAI-compatible base URL | Anthropic base URL | Responses API | Model ID format | Source |
