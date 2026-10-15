@@ -1129,7 +1129,7 @@ RAKAZO_OPENAI_COMPAT_ALLOW_PUBLIC=1
 
 An open-source personal agent for phone, desktop and web, with a runtime you can host yourself.
 
-**Where:** web console **Connections → Chat model → Local or your own endpoint → Add an endpoint**; desktop **Settings → Account → Any OpenAI-compatible endpoint → Add an endpoint**; phone **Settings → Providers → Add** → **Custom**. On a runtime of your own, `[llm]` in `./config/config.toml` or `~/.nanomuse/config.toml`. **API:** `provider = "openai"` (Chat Completions) or `"openai_responses"` (Responses).
+**Where:** web console **Connections → Chat model → Local or your own endpoint → Add an endpoint**; desktop **Settings → nanoMuse Cloud → Any OpenAI-compatible endpoint → Add an endpoint**; phone **Settings → Providers → Add** → **Custom**. On a runtime of your own, `[llm]` in `./config/config.toml` or `~/.nanomuse/config.toml`. **API:** `provider = "openai"` (Chat Completions) or `"openai_responses"` (Responses).
 
 ```toml
 [llm]
