@@ -1,0 +1,7 @@
+# nanoMuse runtime: ./config/config.toml or ~/.nanomuse/config.toml
+# (web console: Connections -> Chat model -> Local or your own endpoint -> Add an endpoint)
+[llm]
+provider = "openai"                         # Chat Completions; "openai_responses" for the Responses API
+model    = "MODEL_ID"
+base_url = "https://YOUR_PROVIDER/v1"
+api_key  = "${YOUR_PROVIDER_API_KEY}"

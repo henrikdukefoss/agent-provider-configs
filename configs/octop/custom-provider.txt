@@ -1,0 +1,10 @@
+# Octop (admin): Model Management -> Custom Providers -> New Provider
+
+Name      myprovider
+Type      OpenAI Compatible          (or Anthropic, or Bedrock)
+Base URL  https://YOUR_PROVIDER/v1
+API Key   YOUR_PROVIDER_API_KEY
+Models    MODEL_ID                   (or Fetch models; OpenAI Compatible only)
+
+# Then Test Connection, save, and "Set as preferred" on the model.
+# Live token usage starts off for custom providers; some gateways reject the stream-usage option.

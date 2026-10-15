@@ -3,7 +3,7 @@
 Copy-paste configs for pointing AI coding agents at any OpenAI-compatible or Anthropic-compatible API:
 a gateway, a router, another model vendor, or a server on your own machine.
 
-22 agents, 21 provider presets, a source link for every key. Last checked: **2026-10-14**.
+31 agents plus the Magpie provider manager, 21 provider presets, a source link for every key. Last checked: **2026-10-15**.
 
 ## How do I point an AI coding agent at a custom OpenAI-compatible API?
 
@@ -48,11 +48,21 @@ Placeholders used everywhere: `https://YOUR_PROVIDER/v1`, `YOUR_PROVIDER_API_KEY
 | [Qwen Code](#qwen-code) | `~/.qwen/settings.json` | yes | yes | yes | docs |
 | [Factory Droid](#factory-droid) | `~/.factory/settings.json` | yes | yes | yes | docs |
 | [Amp](#amp) | Settings → Model Routing → Custom URL | yes | yes | yes | docs |
+| [Grok Build](#grok-build) | `~/.grok/config.toml` | yes | yes | yes | docs, source |
+| [DeepSeek Harness](#deepseek-harness) | Settings → Models, `cordis.patch.yml` | yes | yes | yes | docs |
+| [Command Code](#command-code) | `/connect`, `~/.commandcode/providers.json` | yes | yes | yes | docs |
+| [jcode](#jcode) | `jcode provider add` → `~/.jcode/config.toml` | yes | | | docs, source |
+| [Docker Agent](#docker-agent) | agent YAML, `~/.config/cagent/config.yaml` | yes | yes | yes | docs, source |
 | [Zed](#zed) | `settings.json` | yes | yes | yes | docs, source |
 | [Cursor (BYOK)](#cursor-byok) | Settings → Models | yes | | | docs, staff posts |
 | [GitHub Copilot in VS Code](#github-copilot-in-vs-code-custom-endpoint) | `chatLanguageModels.json` | yes | yes | yes | docs |
 | [GitHub Copilot CLI](#github-copilot-cli) | `COPILOT_PROVIDER_*` env vars | yes | | yes | docs |
 | [JetBrains AI Assistant and Junie CLI](#jetbrains-ai-assistant-and-junie-cli) | IDE settings, `~/.junie/models/*.json` | yes | yes (Junie) | yes (Junie) | docs |
+| [NanoClaw](#nanoclaw) | `NANOCLAW_ANTHROPIC_*` env vars at setup | | | yes | docs |
+| [Octop](#octop) | Model Management → Custom Providers | yes | | yes | docs, source |
+| [Rakazo](#rakazo) | `.env` flag + Settings → Models | yes | | | docs, source |
+| [nanoMuse](#nanomuse) | Connections, or `[llm]` in `config.toml` | yes | yes | | docs |
+| [Magpie](#magpie) (provider manager) | Providers → Add provider, import link | yes | yes | yes | docs |
 | [Gemini CLI](#gemini-cli) | not supported | | | | docs, source |
 
 Also: [Provider presets](#provider-presets) · [check.sh](#checksh-test-a-provider-first) · [How this was checked](#how-this-was-checked) · [Contributing](#contributing)
@@ -652,8 +662,10 @@ Anthropic-compatible: put the entry under `"anthropic": [...]` and set `"selecte
 **Env vars:** `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `OPENAI_MODEL`; or `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL`. Precedence: CLI flags, then shell env, then the first `.env` found (`.qwen/.env`, `.env`, `~/.qwen/.env`, `~/.env`), then `env` in settings.
 
 **Gotchas**
+- **The free Qwen OAuth tier ended on 2026-04-15.** It is no longer offered in `/auth`, and new requests on old cached tokens are rejected. Use a key: `/auth` → **Alibaba ModelStudio** (Coding Plan, Token Plan or API key), **Third-party Providers**, or **Custom Provider** (this config).
 - `baseUrl` is the `/v1` root, not the full `/chat/completions` URL.
 - `model.name` must match an `id` in `modelProviders`.
+- Edits to `modelProviders` are picked up by a running session (reopen `/model`); a provider ID other than `openai`, `anthropic`, `gemini` or `vertex-ai` needs a top-level `providerProtocol` mapping, which is read only at startup.
 - `security.auth.apiKey` and `security.auth.baseUrl` are deprecated; old guides use them. The `qwen auth` command was removed; use `/auth` inside the app.
 
 **Sources:** [Auth docs](https://github.com/QwenLM/qwen-code/blob/main/docs/users/configuration/auth.md) · [Model providers docs](https://github.com/QwenLM/qwen-code/blob/main/docs/users/configuration/model-providers.md)
@@ -719,6 +731,166 @@ For `anthropic-messages`, the base URL can be `https://YOUR_PROVIDER` or end in 
 - Extra headers go in the connection's **Headers** setting (`--headers` in the CLI).
 
 **Sources:** [Amp docs: Model Routing](https://ampcode.com/docs/customize/model-routing) · [The Dial: Tune Modes](https://ampcode.com/docs/the-dial) · [Pricing](https://ampcode.com/pricing)
+
+## Grok Build
+
+xAI's open-source terminal coding agent (`grok`).
+
+**Where:** `~/.grok/config.toml` (or `$GROK_HOME/config.toml`; Windows `%USERPROFILE%\.grok\config.toml`), one `[model.<id>]` table per model. **API:** `api_backend` = `chat_completions` (default), `responses` or `messages` (Anthropic Messages).
+
+```toml
+# ~/.grok/config.toml
+[model.myprovider]
+model = "MODEL_ID"                       # model ID sent to the provider
+base_url = "https://YOUR_PROVIDER/v1"    # keep /v1 for every backend
+name = "MODEL_ID (my provider)"          # shown in the model picker
+env_key = "YOUR_PROVIDER_API_KEY"        # name of the env var, sent as Authorization: Bearer
+api_backend = "chat_completions"         # or "responses", or "messages"
+context_window = 128000
+
+[models]
+default = "myprovider"                   # the [model.<id>] key
+```
+
+Anthropic-compatible: `api_backend = "messages"`. The base URL still ends in `/v1`; Grok appends `/messages`. The `env_key` value goes out as `Authorization: Bearer`; for a provider that only accepts `x-api-key`, put the key in `extra_headers` as Grok's own Anthropic example does.
+
+**Env vars:** the one named by `env_key` (a name, or a list of names where the first non-empty one wins). `GROK_MODELS_BASE_URL` is a different mechanism: it replaces Grok's whole model list with `{base}/models` and authenticates that fetch with `XAI_API_KEY` only.
+
+**Gotchas**
+- **Credential order per model:** `api_key`, then `env_key`, then your `grok login` session, then `XAI_API_KEY`. A custom model with its own `env_key` works while you stay signed in to xAI for Grok's own models.
+- A new model without `context_window` is treated as 200,000 tokens, which decides when auto-compaction runs.
+- On `responses`, Grok asks for a `concise` reasoning summary. Set `reasoning_summary = "none"` for gateways that reject `reasoning.summary`.
+- The `web_search` tool runs on its own model (`[models] web_search`); server-side search only runs on a model with `supports_backend_search = true`.
+- An enterprise `requirements.toml` can pin the allowed models; a local `[model.<id>]` can't widen that list.
+- `grok models` lists custom models too. Switch with `/model myprovider` or `grok -m myprovider`.
+
+**Sources:** [Grok Build settings reference](https://docs.x.ai/build/settings/reference) · [Custom models guide](https://github.com/xai-org/grok-build/blob/main/crates/codegen/xai-grok-pager/docs/user-guide/11-custom-models.md) · [Config reference](https://github.com/xai-org/grok-build/blob/main/crates/codegen/xai-grok-pager/docs/user-guide/26-config-reference.md)
+
+## DeepSeek Harness
+
+DeepSeek's agent harness (`dsh`), in developer preview with breaking changes announced.
+
+**Where:** web UI **Settings → Models → Add model provider → Custom model API**, saved to `$DSH_HOME/profiles/<profile>/cordis.patch.yml` (`~/.dsh/profiles/web/cordis.patch.yml` for `dsh web`). **API:** OpenAI Chat Completions, OpenAI Responses or Anthropic Messages (`openai-completions`, `openai-responses`, `anthropic-messages`), one per provider.
+
+In the UI: **Provider ID** (lowercase), display name, **Base URL** (`https://YOUR_PROVIDER/v1`), **API protocol**, **API key**, and at least one model (**Fetch available models** or type the IDs). The same thing as a file ([`configs/deepseek-harness/cordis.patch.yml`](configs/deepseek-harness/cordis.patch.yml)):
+
+```yaml
+# $DSH_HOME/profiles/web/cordis.patch.yml
+- id: llm-pi-ai
+  config:
+    providers:
+      myprovider:
+        apiKeyEnv: YOUR_PROVIDER_API_KEY
+        api: openai-completions
+        baseURL: https://YOUR_PROVIDER/v1
+        models:
+          - id: MODEL_ID
+```
+
+For an Anthropic-compatible endpoint, add a second provider with `api: anthropic-messages` and the provider's Anthropic base URL (no `/v1`; dsh sends requests through the same pi-ai library as Pi).
+
+**Env vars:** the one `apiKeyEnv` names. A key typed into the Models page is stored in `$DSH_HOME/.credentials.yaml` and never shown again.
+
+**Gotchas**
+- **The Provider ID is permanent.** To rename, add a new provider and delete the old one.
+- **One protocol per provider.** A gateway that serves Chat Completions and Anthropic Messages needs two providers.
+- **A gateway that refuses every request** with a working key usually objects to OpenAI-only request details: set `compat.supportsDeveloperRole: false` and `compat.maxTokensField: max_tokens` on the provider.
+- A Cordis override replaces the whole entry config. When editing the file, keep the other providers in the same entry.
+- Hand-entered models get no **Effort** menu until you declare `reasoningEfforts`. DeepSeek V4 behind a gateway also needs `compat.thinkingFormat: deepseek` before `off` stops it thinking.
+- Changes apply on the next request; no restart.
+
+**Sources:** [Configure models](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/providers.md) · [`dsh-llm-pi-ai` reference](https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/llm/llm-pi-ai/README.md)
+
+## Command Code
+
+**Where:** `/connect` → **(BYOK) Add your own provider**, or `~/.commandcode/providers.json` (edits apply live). **API:** `api` = `openai-completions` (default), `openai-responses` or `anthropic-messages`.
+
+```json
+{
+  "provider": {
+    "myprovider": {
+      "name": "My Provider",
+      "baseURL": "https://YOUR_PROVIDER/v1",
+      "apiKey": "$YOUR_PROVIDER_API_KEY",
+      "api": "openai-completions",
+      "models": {
+        "MODEL_ID": { "contextWindow": 128000 }
+      }
+    }
+  }
+}
+```
+
+Anthropic-compatible: `"api": "anthropic-messages"`. Command Code adds `/v1` to the base URL if it's missing.
+
+**Env vars:** `apiKey` takes a reference, not a key: `"$NAME"` or `"{env:NAME}"`, `"!command"` (its output), or `false` for keyless local servers. A key pasted in `/connect` goes to `~/.commandcode/auth.json` (mode 0600) and wins over the file's reference.
+
+**Gotchas**
+- **A raw key written into `providers.json` is refused** with a warning.
+- `"MODEL_ID": {}` is a complete model entry; add `contextWindow` at least. `/connect` imports the provider's model list for you.
+- Pick the model with `/model`; each provider has its own section. While a BYOK model is active, sub-agents and compaction use it too.
+- BYOK requests go from your machine straight to the provider. `cmd --local-only` (or `CMD_LOCAL_ONLY=1`) also turns off telemetry.
+
+**Sources:** [Command Code docs: BYOK providers](https://commandcode.ai/docs/byok)
+
+## jcode
+
+**Where:** `jcode provider add`, which writes `[providers.<name>]` to `~/.jcode/config.toml`. **API:** OpenAI-compatible (Chat Completions). Anthropic goes through jcode's built-in Anthropic API key or Claude sign-in, not a custom profile.
+
+```sh
+printf '%s' "$YOUR_PROVIDER_API_KEY" | jcode provider add myprovider \
+  --base-url https://YOUR_PROVIDER/v1 \
+  --model MODEL_ID \
+  --api-key-stdin \
+  --set-default
+
+jcode --provider-profile myprovider auth-test --no-tool-smoke
+```
+
+**Env vars:** `--api-key-stdin` stores the key in jcode's private config dir (for example `~/.config/jcode/provider-myprovider.env`). `--api-key-env NAME` reads it from an env var instead; `--no-api-key` is for localhost servers.
+
+**Gotchas**
+- Prefer `--api-key-stdin` over `--api-key`, which leaves the key in your shell history.
+- `--set-default` makes the profile the startup provider and model. `--overwrite` replaces an existing profile of the same name.
+- `--context-window` sets the window for models jcode doesn't know; `--model-catalog` lists the provider's `/models`.
+- Providers that want the key in a header other than `Authorization`: `--auth api-key --auth-header <name>`.
+- Fireworks, Novita and MiniMax have built-in presets (`jcode login --provider <name>`).
+
+**Sources:** [OAUTH.md: OpenAI-compatible API-key providers](https://github.com/1jehuang/jcode/blob/master/OAUTH.md) · [`src/cli/args.rs`](https://github.com/1jehuang/jcode/blob/master/src/cli/args.rs)
+
+## Docker Agent
+
+Docker's runtime for YAML-defined agents (formerly cagent), run as `docker agent`.
+
+**Where:** a `providers` block in the agent YAML, or in `~/.config/cagent/config.yaml` to make it available to every agent and command. **API:** `api_type` = `openai_chatcompletions` or `openai_responses`; `provider: anthropic` for Anthropic Messages.
+
+```yaml
+# agent.yaml  ->  docker agent run agent.yaml
+providers:
+  myprovider:
+    base_url: https://YOUR_PROVIDER/v1
+    token_key: YOUR_PROVIDER_API_KEY     # name of the env var
+    api_type: openai_chatcompletions
+
+agents:
+  root:
+    model: myprovider/MODEL_ID
+    description: A helpful assistant
+    instruction: You are a helpful assistant.
+```
+
+Anthropic-compatible: `provider: anthropic` and `base_url: https://YOUR_PROVIDER` (no `/v1`; the Anthropic SDK appends `/v1/messages`). The key is sent as `x-api-key`. The interactive route for a global provider is `docker agent setup` → **Custom OpenAI-compatible endpoint**.
+
+**Env vars:** the one `token_key` names. Docker Agent looks it up in the environment, Compose secrets under `/run/secrets/`, `~/.config/cagent/.env` (read on every run), then credential helpers; `--env-from-file` adds a file.
+
+**Gotchas**
+- **Without `api_type`, the model name decides:** gpt-4.1, gpt-5, o-series and Codex names go to `openai_responses`, everything else to Chat Completions. Set it explicitly.
+- **`model: auto` never picks a custom provider.** Reference it as `myprovider/MODEL_ID` in the agent, with `--model` or `default_model`.
+- A provider with a `base_url` bypasses any configured models gateway and authenticates with its own `token_key`.
+- A custom Anthropic `base_url` receives `ANTHROPIC_API_KEY` when `token_key` is unset. Only point it at hosts you trust with that key.
+- An agent file's provider wins over a global one with the same name.
+
+**Sources:** [Provider definitions](https://docker.github.io/docker-agent/providers/custom/) · [Managing secrets](https://docker.github.io/docker-agent/guides/secrets/) · [Anthropic: Claude access paths](https://docker.github.io/docker-agent/providers/anthropic/)
 
 ## Zed
 
@@ -874,11 +1046,155 @@ Run it with `junie --model custom:<file-name-without-.json>`. `apiType` can be `
 
 **Sources:** [AI Assistant: providers and API keys](https://www.jetbrains.com/help/ai-assistant/settings-reference-providers-and-api-keys.html) · [AI Assistant: custom models](https://www.jetbrains.com/help/ai-assistant/use-custom-models.html) · [Junie: custom LLM models](https://junie.jetbrains.com/docs/custom-llm-models.html)
 
+## NanoClaw
+
+A container-isolated personal agent that runs Claude Code through the Claude Agent SDK.
+
+**Where:** env vars set before setup (`bash nanoclaw.sh`). **API:** Anthropic Messages only.
+
+```sh
+# No /v1: the Claude Agent SDK appends /v1/messages itself.
+export NANOCLAW_ANTHROPIC_BASE_URL="https://YOUR_PROVIDER"
+export NANOCLAW_ANTHROPIC_AUTH_TOKEN="$YOUR_PROVIDER_API_KEY"
+bash nanoclaw.sh
+
+# Model, per agent group (or NANOCLAW_DEFAULT_MODEL=MODEL_ID in the host .env for every group):
+ncl groups config update --id <group-id> --model MODEL_ID
+ncl groups restart --id <group-id>
+```
+
+**Env vars:** setup stores the token in the credential vault as a header injection keyed to your provider's hostname. The agent container only sees `ANTHROPIC_BASE_URL` and the placeholder `ANTHROPIC_AUTH_TOKEN=gateway-managed`; the real key is added on the wire.
+
+**Gotchas**
+- **No OpenAI-compatible option in the default Claude provider.** For other APIs, the `/add-opencode` skill switches an agent group to OpenCode, which then takes an [OpenCode provider block](#opencode).
+- A group with no model asks for a Claude model by name, so the endpoint must serve that ID, or set a model as above.
+- The README's `.env` route (`ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`) is meant for one-off experiments; the setup variables keep the key out of the container.
+- `NANOCLAW_DEFAULT_MODEL` is read when a group's container starts, so a change applies on the next start without a host restart.
+
+**Sources:** [NanoClaw docs: credentials](https://docs.nanoclaw.dev/operate/credentials) · [Environment variables](https://docs.nanoclaw.dev/reference/environment-variables) · [README FAQ](https://github.com/nanocoai/nanoclaw/blob/main/README.md) · [Release 2.4 notes (`NANOCLAW_DEFAULT_MODEL`)](https://github.com/nanocoai/nanoclaw/blob/main/docs/release-2.4-update.md)
+
+## Octop
+
+Tencent Cloud's self-hosted multi-user assistant (web dashboard plus Feishu, DingTalk, WeCom, QQ, WeChat, Telegram, Discord).
+
+**Where:** dashboard, as admin: **Model Management → Custom Providers → New Provider**. CLI: `octop provider create`. **API:** **Type** = **OpenAI Compatible**, **Anthropic** or **Bedrock**.
+
+| Field | Value |
+| --- | --- |
+| Name | `myprovider` |
+| Type | OpenAI Compatible |
+| Base URL | `https://YOUR_PROVIDER/v1` |
+| API Key | `YOUR_PROVIDER_API_KEY` |
+| Models | **Fetch models**, or add `MODEL_ID` by hand |
+
+Then **Test Connection**, save, and **Set as preferred** on the model so agents use it by default ([`configs/octop/custom-provider.txt`](configs/octop/custom-provider.txt)).
+
+**Env vars:** none; the key is stored with the provider.
+
+**Gotchas**
+- **Fetch models** works only for OpenAI Compatible providers. Fetched models start disabled; enable the ones you want.
+- Live token usage starts **off** for custom providers because some gateways reject the stream-usage option and the chat fails. Turn it on only if yours accepts it.
+- Per model you can set context window, max tokens and reasoning support under the provider's model management.
+
+**Sources:** [Octop user guide §4 (Chinese)](https://github.com/TencentCloud/Octop/blob/main/docs/user-guide.md) · [CLI reference](https://github.com/TencentCloud/Octop/blob/main/docs/cli.md) · [`CustomProviderModal.tsx`](https://github.com/TencentCloud/Octop/blob/main/dashboard/src/pages/Settings/Models/components/modals/CustomProviderModal.tsx) · [`en.json` labels](https://github.com/TencentCloud/Octop/blob/main/dashboard/src/locales/en.json)
+
+## Rakazo
+
+Self-hosted persistent AI teammates with their own computers (web, desktop, iOS, Android).
+
+**Where:** the deployment's `.env`, then **Settings → Models → OpenAI-compatible** (also offered as **Connect a model** at onboarding). **API:** Chat Completions.
+
+```sh
+# .env of your Rakazo deployment, then recreate the stack
+RAKAZO_OPENAI_COMPAT_ALLOW_PUBLIC=1
+```
+
+| Field | Value |
+| --- | --- |
+| OpenAI-compatible server URL | `https://YOUR_PROVIDER/v1` |
+| Model id | `MODEL_ID` (or **Models from server**) |
+| API key | `YOUR_PROVIDER_API_KEY` (optional) |
+| Advanced | **Supports images** on if the model takes images |
+
+**Env vars:** `RAKAZO_OPENAI_COMPAT_ALLOW_PUBLIC=1` on the deployment. The key itself is entered per user in the UI.
+
+**Gotchas**
+- **Public endpoints are blocked by default.** Any public hostname needs the flag above and HTTPS. Literal private IPs, loopback and `host.docker.internal` work without it.
+- **Supports images** is off for new connections. Without it, attachments and the screenshot computer tools are unavailable.
+- Turn on **Supports thinking** only if the endpoint accepts the standard `reasoning_effort` parameter.
+
+**Sources:** [Self-hosting guide](https://github.com/elie222/rakazo/blob/main/docs/self-host.md) · [`pi-openai-compatible-provider.ts`](https://github.com/elie222/rakazo/blob/main/packages/adapters/src/pi-openai-compatible-provider.ts)
+
+## nanoMuse
+
+An open-source personal agent for phone, desktop and web, with a runtime you can host yourself.
+
+**Where:** web console **Connections → Chat model → Local or your own endpoint → Add an endpoint**; desktop **Settings → Account → Any OpenAI-compatible endpoint → Add an endpoint**; phone **Settings → Providers → Add** → **Custom**. On a runtime of your own, `[llm]` in `./config/config.toml` or `~/.nanomuse/config.toml`. **API:** `provider = "openai"` (Chat Completions) or `"openai_responses"` (Responses).
+
+```toml
+[llm]
+provider = "openai"
+model    = "MODEL_ID"
+base_url = "https://YOUR_PROVIDER/v1"
+api_key  = "${YOUR_PROVIDER_API_KEY}"
+```
+
+In the apps: **Base URL** `https://YOUR_PROVIDER/v1`, **API key**, and leave **Models** empty if the endpoint lists them at `/models` (otherwise give the IDs, comma-separated).
+
+**Env vars:** `${NAME}` in `api_key`. Keys entered in the web console go to the runtime's vault.
+
+**Gotchas**
+- **A custom endpoint covers chat only** until you set it for the other jobs. The screen-operating row ("hands") needs a model that sees images; pictures and clips need their own model IDs.
+- A base URL saved from the apps without a path gets `/v1` appended.
+- If the endpoint silently ignores `tools`, set `tool_mode = "prompt"`; `auto` only falls back when the endpoint rejects them.
+- Several custom endpoints can exist side by side on desktop and web; the phones keep one slot per provider.
+- `nanomuse config show` prints the effective settings with secrets masked.
+
+**Sources:** [Bring your own key](https://github.com/nano-muse/nanoMuse/blob/main/docs/own-key.md) · [Configuration](https://github.com/nano-muse/nanoMuse/blob/main/docs/configuration.md)
+
+## Magpie
+
+Not an agent: a desktop provider manager that sets the model for Claude Code, Codex, OpenCode, Gemini CLI and many other agents through one local gateway (`127.0.0.1:3425`) that translates between OpenAI Chat, Responses, Anthropic Messages and Gemini.
+
+**Where:** **Providers → Add provider** in the app, `magpie provider add` in a terminal, or an "Add to magpie" import link. **API (provider side):** `chat` (Chat Completions), `responses`, `anthropic` (Messages), `gemini`.
+
+```sh
+magpie provider add "My Provider" url=https://YOUR_PROVIDER/v1 anthropic=https://YOUR_PROVIDER key=YOUR_PROVIDER_API_KEY
+magpie claude myprovider/MODEL_ID      # or pick per agent on the Agents page
+```
+
+Import link format ([`configs/magpie/import-link.txt`](configs/magpie/import-link.txt)); everything after `#` stays in the browser:
+
+```text
+https://usemagpie.ai/import#name=My%20Provider&id=myprovider&chat=https%3A%2F%2FYOUR_PROVIDER%2Fv1&anthropic=https%3A%2F%2FYOUR_PROVIDER&models=MODEL_ID
+```
+
+| Parameter | Value |
+| --- | --- |
+| `name` or `preset` | display name (max 80 chars), or a built-in preset ID |
+| `chat` | Chat Completions base URL, ending in `/v1` |
+| `responses` | Responses base URL, ending in `/v1` |
+| `anthropic` | Anthropic base URL, **without** `/v1` |
+| `gemini` | Gemini API base URL, ending in `/v1beta` |
+| `key` | the user's key; leave it out of public links |
+| `models` | comma-separated IDs; default is the provider's `/v1/models` |
+| `id`, `catalog`, `website`, `keys`, `icon` | optional: agent-facing ID, models.dev metadata, links, icon |
+
+**Gotchas**
+- Without a preset, at least one of `chat`, `responses`, `anthropic`, `gemini` is required. Base URLs must be HTTPS (plain HTTP only for localhost, private addresses and `*.local`) and can't carry a query, fragment or credentials.
+- Nothing is saved until the user confirms the import in Magpie.
+- Agents pick models as `provider/model` and never see the vendor key or URL.
+- The app scheme `magpie://import?...` takes the same parameters as a query string.
+
+**Sources:** [Magpie docs: Add to magpie](https://usemagpie.ai/docs/import) · [Reference: providers and the gateway](https://github.com/yetone/magpie/blob/main/docs/reference.md) · [README](https://github.com/yetone/magpie/blob/main/README.md)
+
 ## Gemini CLI
 
-Not supported natively. `GOOGLE_GEMINI_BASE_URL` changes the host, but requests still use the Gemini API format (`generateContent`), so it only works with a proxy that speaks Gemini's API. There is no OpenAI- or Anthropic-compatible option.
+Not supported natively. `GOOGLE_GEMINI_BASE_URL` changes the host (HTTPS unless it's localhost), but requests still use the Gemini API format (`generateContent`), so it only works with a server that speaks Gemini's API. There is no OpenAI- or Anthropic-compatible option: the feature request for one ([#23385](https://github.com/google-gemini/gemini-cli/issues/23385)) was closed without shipping, and the client still has no OpenAI or Anthropic code path (re-checked on the 0.66 nightly, 2026-10-15).
 
-**Sources:** [Configuration reference](https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md) · [`contentGenerator.ts`](https://github.com/google-gemini/gemini-cli/blob/main/packages/core/src/core/contentGenerator.ts)
+To use an OpenAI- or Anthropic-compatible provider anyway, put a local gateway that translates into Gemini's format in between. [Magpie](#magpie)'s gateway does (`GOOGLE_GEMINI_BASE_URL=http://127.0.0.1:3425`, `GEMINI_API_KEY=magpie`).
+
+**Sources:** [Configuration reference](https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md) · [`contentGenerator.ts`](https://github.com/google-gemini/gemini-cli/blob/main/packages/core/src/core/contentGenerator.ts) · [Issue #23385](https://github.com/google-gemini/gemini-cli/issues/23385) · [Magpie README](https://github.com/yetone/magpie/blob/main/README.md)
 
 ---
 

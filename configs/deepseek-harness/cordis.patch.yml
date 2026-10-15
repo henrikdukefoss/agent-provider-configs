@@ -1,0 +1,16 @@
+# $DSH_HOME/profiles/web/cordis.patch.yml  ($DSH_HOME defaults to ~/.dsh; "web" is the profile `dsh web` uses)
+# Settings -> Models -> Add model provider -> Custom model API writes this same entry.
+# A Cordis override replaces the whole entry config: keep any other providers you already have here.
+- id: llm-pi-ai
+  config:
+    providers:
+      myprovider:                          # Provider ID: lowercase, permanent
+        apiKeyEnv: YOUR_PROVIDER_API_KEY   # name of the env var, not the key itself
+        api: openai-completions            # or openai-responses, or anthropic-messages (one protocol per provider)
+        baseURL: https://YOUR_PROVIDER/v1
+        models:
+          - id: MODEL_ID
+        # Gateways that refuse every request although URL and key are right:
+        # compat:
+        #   supportsDeveloperRole: false
+        #   maxTokensField: max_tokens

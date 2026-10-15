@@ -1,0 +1,13 @@
+# Magpie "Add to magpie" import link. Settings live after the #, which browsers never send to a server.
+# Leave key out of any public link; the user pastes their key in Magpie's dialog.
+https://usemagpie.ai/import#name=My%20Provider&id=myprovider&chat=https%3A%2F%2FYOUR_PROVIDER%2Fv1&anthropic=https%3A%2F%2FYOUR_PROVIDER&models=MODEL_ID
+
+# chat       OpenAI Chat Completions base URL, ending in /v1
+# responses  OpenAI Responses base URL, ending in /v1 (optional)
+# anthropic  Anthropic Messages base URL, the root without /v1
+# gemini     Gemini API base URL, ending in /v1beta (optional)
+# models     comma-separated IDs; without it, Magpie lists the provider's /v1/models
+# Desktop-app scheme for the same link: magpie://import?name=...&chat=...
+
+# By hand instead:
+# magpie provider add "My Provider" url=https://YOUR_PROVIDER/v1 anthropic=https://YOUR_PROVIDER key=YOUR_PROVIDER_API_KEY

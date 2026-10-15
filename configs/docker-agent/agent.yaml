@@ -1,0 +1,21 @@
+# agent.yaml  ->  docker agent run agent.yaml
+# To make the provider available to every agent and command, put the providers block in
+# ~/.config/cagent/config.yaml instead (or run `docker agent setup` -> Custom OpenAI-compatible endpoint).
+providers:
+  myprovider:
+    base_url: https://YOUR_PROVIDER/v1
+    token_key: YOUR_PROVIDER_API_KEY     # name of the env var (also read from ~/.config/cagent/.env)
+    api_type: openai_chatcompletions     # or openai_responses; unset = guessed from the model name
+
+agents:
+  root:
+    model: myprovider/MODEL_ID
+    description: A helpful assistant
+    instruction: You are a helpful assistant.
+
+# Anthropic-compatible instead:
+# providers:
+#   myprovider:
+#     provider: anthropic
+#     base_url: https://YOUR_PROVIDER      # no /v1; the Anthropic SDK appends /v1/messages
+#     token_key: YOUR_PROVIDER_API_KEY     # sent as x-api-key

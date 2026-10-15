@@ -1,0 +1,11 @@
+# 1. .env of your Rakazo deployment, then recreate the stack.
+#    Needed for any public hostname (which must use HTTPS); private IPs, loopback
+#    and host.docker.internal work without it.
+RAKAZO_OPENAI_COMPAT_ALLOW_PUBLIC=1
+
+# 2. Settings -> Models -> OpenAI-compatible
+OpenAI-compatible server URL  https://YOUR_PROVIDER/v1
+Model id                      MODEL_ID     (or Models from server)
+API key                       YOUR_PROVIDER_API_KEY
+Advanced                      Supports images: on if the model takes images (screenshot computer tools need it)
+                              Supports thinking: on only if the endpoint accepts reasoning_effort

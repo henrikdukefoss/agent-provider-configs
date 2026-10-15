@@ -1,0 +1,16 @@
+# ~/.grok/config.toml  (or $GROK_HOME/config.toml; Windows %USERPROFILE%\.grok\config.toml)
+[model.myprovider]
+model = "MODEL_ID"                       # model ID sent to the provider
+base_url = "https://YOUR_PROVIDER/v1"    # keep /v1 for every backend; Grok appends /chat/completions, /responses or /messages
+name = "MODEL_ID (my provider)"          # shown in the model picker
+env_key = "YOUR_PROVIDER_API_KEY"        # name of the env var, sent as Authorization: Bearer
+api_backend = "chat_completions"         # or "responses", or "messages" (Anthropic Messages)
+context_window = 128000                  # unset means 200,000
+
+[models]
+default = "myprovider"                   # the [model.<id>] key
+
+# Anthropic-compatible instead:
+# api_backend = "messages"
+# A provider that wants x-api-key rather than Bearer:
+# extra_headers = { "x-api-key" = "...", "anthropic-version" = "2023-06-01" }

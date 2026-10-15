@@ -1,0 +1,13 @@
+{
+  "provider": {
+    "myprovider": {
+      "name": "My Provider",
+      "baseURL": "https://YOUR_PROVIDER/v1",
+      "apiKey": "$YOUR_PROVIDER_API_KEY",
+      "api": "openai-completions",
+      "models": {
+        "MODEL_ID": { "contextWindow": 128000 }
+      }
+    }
+  }
+}
