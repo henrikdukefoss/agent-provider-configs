@@ -3,7 +3,7 @@
 Copy-paste configs for pointing AI coding agents at any OpenAI-compatible or Anthropic-compatible API:
 a gateway, a router, another model vendor, or a server on your own machine.
 
-31 agents plus the Magpie provider manager, 21 provider presets, a source link for every key. Last checked: **2026-10-15**.
+31 agents plus the Magpie provider manager, 22 provider presets, a source link for every key. Last checked: **2026-10-15**.
 
 ## How do I point an AI coding agent at a custom OpenAI-compatible API?
 
@@ -73,6 +73,8 @@ Every config shown is also a plain file in [`configs/`](configs/).
 
 Base URLs as each provider's own docs state them. "Anthropic base URL" is the value for `ANTHROPIC_BASE_URL` (Claude Code), so it has no `/v1`. Listed alphabetically within each group; no ranking is implied.
 
+TheRouter preset checked against provider documentation on 2026-11-04; Chat Completions was tested, while Anthropic Messages was not verified in this check.
+
 **Gateways and routers** (one key, many vendors' models)
 
 | Provider | OpenAI-compatible base URL | Anthropic base URL | Responses API | Model ID format | How you pay | Source |
@@ -83,6 +85,7 @@ Base URLs as each provider's own docs state them. "Anthropic base URL" is the va
 | Portkey | `https://api.portkey.ai/v1` | `https://api.portkey.ai` | yes | `@provider-slug/model` | see Portkey pricing | [docs](https://portkey.ai/docs/api-reference/inference-api/introduction), [Claude Code](https://portkey.ai/docs/integrations/libraries/claude-code) |
 | Requesty | `https://router.requesty.ai/v1` | `https://router.requesty.ai` | yes | `provider/model` | pay per token; fee on credit top-ups | [docs](https://docs.requesty.ai/quickstart), [Claude Code](https://docs.requesty.ai/integrations/claude-code) |
 | Standard Compute | `https://api.stdcmpt.com/v1` | `https://api.stdcmpt.com` | yes | `vendor/model`, or `standardcompute` to let it pick | flat monthly plan from $19, stops at budget | [docs](https://docs.standardcompute.com/) |
+| TheRouter.ai | `https://api.therouter.ai/v1` | `https://api.therouter.ai` | | `vendor/model` | usage-based; see model pricing | [quickstart](https://therouter.ai/docs/quickstart/), [Claude Code](https://therouter.ai/docs/guides/guides/claude-code-integration/) |
 | Vercel AI Gateway | `https://ai-gateway.vercel.sh/v1` | `https://ai-gateway.vercel.sh` | yes | `provider/model` | pay per token at provider list price | [docs](https://vercel.com/docs/ai-gateway/sdks-and-apis/openai-chat-completions), [Anthropic API](https://vercel.com/docs/ai-gateway/sdks-and-apis/anthropic-messages-api) |
 
 [![Add to Magpie](https://usemagpie.ai/img/add-to-magpie.svg)](https://usemagpie.ai/import#name=Standard+Compute&id=standardcompute&chat=https%3A%2F%2Fapi.stdcmpt.com%2Fv1&anthropic=https%3A%2F%2Fapi.stdcmpt.com&website=https%3A%2F%2Fstandardcompute.com&keys=https%3A%2F%2Fstandardcompute.com%2Fdashboard%2Fapi-keys&icon=https%3A%2F%2Fstandardcompute.com%2Fapple-icon.png)
