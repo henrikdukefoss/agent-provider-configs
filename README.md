@@ -3,7 +3,7 @@
 Copy-paste configs for pointing AI coding agents at any OpenAI-compatible or Anthropic-compatible API:
 a gateway, a router, another model vendor, or a server on your own machine.
 
-31 agents plus the Magpie provider manager, 21 provider presets, a source link for every key. Last checked: **2026-10-15**.
+31 agents plus the Magpie provider manager, 22 provider presets, a source link for every key. Last checked: **2026-11-10**.
 
 ## How do I point an AI coding agent at a custom OpenAI-compatible API?
 
@@ -16,7 +16,7 @@ Where they go depends on the agent:
 - **Cline, Roo Code, Cursor, Copilot, JetBrains** have an "OpenAI Compatible" option in their settings UI.
 - Most other agents take a JSON or YAML provider entry. Find yours in the table, copy the block, replace the three placeholders.
 
-Placeholders used everywhere: `https://YOUR_PROVIDER/v1`, `YOUR_PROVIDER_API_KEY`, `MODEL_ID`. Real values for 21 providers are in [Provider presets](#provider-presets).
+Placeholders used everywhere: `https://YOUR_PROVIDER/v1`, `YOUR_PROVIDER_API_KEY`, `MODEL_ID`. Real values for 22 providers are in [Provider presets](#provider-presets).
 
 ### The four mistakes behind most "404" and "model not found" errors
 
@@ -78,6 +78,7 @@ Base URLs as each provider's own docs state them. "Anthropic base URL" is the va
 | Provider | OpenAI-compatible base URL | Anthropic base URL | Responses API | Model ID format | How you pay | Source |
 | --- | --- | --- | :---: | --- | --- | --- |
 | Cloudflare AI Gateway | `https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/compat` | pass-through to Anthropic only | | `provider/model` | core features free; 5% fee on Unified Billing credits | [docs](https://developers.cloudflare.com/ai-gateway/usage/chat-completion/) |
+| CloudGPU | `https://cloudgpu.app/v1` |  |  | bare | prepaid balance; see official pricing page | [docs](https://cloudgpu.app/api/docs) |
 | LiteLLM proxy (self-hosted) | `http://localhost:4000` | `http://localhost:4000` | yes | names from your proxy config | self-hosted, you bring upstream keys | [docs](https://docs.litellm.ai/docs/tutorials/claude_responses_api) |
 | OpenRouter | `https://openrouter.ai/api/v1` | `https://openrouter.ai/api` | yes | `vendor/model` | pay per token; fee on credit purchases | [docs](https://openrouter.ai/docs/quickstart), [Claude Code](https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration) |
 | Portkey | `https://api.portkey.ai/v1` | `https://api.portkey.ai` | yes | `@provider-slug/model` | see Portkey pricing | [docs](https://portkey.ai/docs/api-reference/inference-api/introduction), [Claude Code](https://portkey.ai/docs/integrations/libraries/claude-code) |
