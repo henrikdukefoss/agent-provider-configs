@@ -3,7 +3,7 @@
 Copy-paste configs for pointing AI coding agents at any OpenAI-compatible or Anthropic-compatible API:
 a gateway, a router, another model vendor, or a server on your own machine.
 
-31 agents plus the Magpie provider manager, 21 provider presets, a source link for every key. Last checked: **2026-10-15**.
+31 agents plus the Magpie provider manager, 22 provider presets, a source link for every key. Last checked: **2026-10-15**.
 
 ## How do I point an AI coding agent at a custom OpenAI-compatible API?
 
@@ -98,11 +98,14 @@ Using Magpie? One click adds Standard Compute as a provider (you paste your key 
 | DeepSeek | `https://api.deepseek.com` | `https://api.deepseek.com/anthropic` | | bare | [docs](https://api-docs.deepseek.com/), [Anthropic API](https://api-docs.deepseek.com/guides/anthropic_api) |
 | Fireworks AI | `https://api.fireworks.ai/inference/v1` | `https://api.fireworks.ai/inference` | yes | `accounts/fireworks/models/<model>` | [docs](https://docs.fireworks.ai/tools-sdks/openai-compatibility), [Anthropic API](https://docs.fireworks.ai/tools-sdks/anthropic-compatibility) |
 | Groq | `https://api.groq.com/openai/v1` | | yes | bare | [docs](https://console.groq.com/docs/openai) |
+| Lyceum | `https://api.lyceum.technology/openai/v1` | `https://api.lyceum.technology/anthropic` | yes | `org/model` (`z-ai/glm-5.3`) | [docs](https://docs.lyceum.technology/docs/agents/overview), [Claude Code](https://docs.lyceum.technology/docs/inference/claude-code), [Codex](https://docs.lyceum.technology/docs/agents/codex) |
 | MiniMax | `https://api.minimax.io/v1` | `https://api.minimax.io/anthropic` | yes | bare | [docs](https://platform.minimax.io/docs/api-reference/text-openai-api), [Claude Code](https://platform.minimax.io/docs/m-plan/claude-code) |
 | Mistral | `https://api.mistral.ai/v1` | | | bare | [docs](https://docs.mistral.ai/api) |
 | Moonshot AI (Kimi) | `https://api.moonshot.ai/v1` | `https://api.moonshot.ai/anthropic` | yes | bare | [docs](https://platform.kimi.ai/docs/guide/agent-support), [Claude Code](https://platform.kimi.ai/docs/guide/claude-code-kimi) |
 | Together AI | `https://api.together.ai/v1` | | | `org/model` | [docs](https://docs.together.ai/docs/openai-api-compatibility) |
 | Z.ai (GLM) | `https://api.z.ai/api/paas/v4` (Coding Plan: `https://api.z.ai/api/coding/paas/v4`) | `https://api.z.ai/api/anthropic` | | bare | [docs](https://docs.z.ai/guides/develop/http/introduction), [Claude Code](https://docs.z.ai/scenario-example/develop-tools/claude) |
+
+- **Lyceum's OpenAI path is `/openai/v1`**, not `/v1`. Claude Code sends the key as `x-api-key` on the `/anthropic` URL.
 
 **Local servers and first-party APIs**
 
